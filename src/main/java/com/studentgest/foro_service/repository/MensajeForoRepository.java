@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface MensajeForoRepository extends JpaRepository<MensajeForo, Long> {
     List<MensajeForo> findByForoId(Long foroId);
+    List<MensajeForo> findByForoIdOrderByFechaDesc(Long foroId);
 }

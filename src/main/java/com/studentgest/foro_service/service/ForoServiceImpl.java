@@ -1,6 +1,7 @@
 package com.studentgest.foro_service.service;
 
 import com.studentgest.foro_service.dto.*;
+import com.studentgest.foro_service.exception.ForoNotFoundException;
 import com.studentgest.foro_service.model.Foro;
 import com.studentgest.foro_service.model.MensajeForo;
 import com.studentgest.foro_service.repository.ForoRepository;
@@ -103,5 +104,39 @@ public class ForoServiceImpl implements ForoService {
         Foro foro = foroRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Foro no encontrado"));
         foroRepository.delete(foro);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ForoResponse> obtenerForosPorCurso(Long cursoId) {
+        return foroRepository.findByCursoId(cursoId).stream()
+                .map(foro -> {
+                    ForoResponse response = modelMapper.map(foro, ForoResponse.class);
+                    // Puedes agregar lógica adicional aquí si es necesario
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<MensajeResponse> obtenerMensajesPorForo(Long foroId) {
+        // Verificar que el foro existe
+        if (!foroRepository.existsById(foroId)) {
+            throw new ForoNotFoundException(foroId);
+        }
+
+        return mensajeForoRepository.findByForoIdOrderByFechaDesc(foroId).stream()
+                .map(this::convertirAMensajeResponse)
+                .collect(Collectors.toList());
+    }
+
+    private MensajeResponse convertirAMensajeResponse(MensajeForo mensaje) {
+        MensajeResponse response = new MensajeResponse();
+        response.setId(mensaje.getId());
+        response.setForoId(mensaje.getForo().getId());
+        response.setUsuarioId(mensaje.getUsuarioId());
+        response.setMensaje(mensaje.getMensaje());
+        response.setFecha(mensaje.getFecha());
+        return response;
     }
 }

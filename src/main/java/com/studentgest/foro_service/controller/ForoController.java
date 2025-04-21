@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/foro")
+@RequestMapping("/api/foro")
 public class ForoController {
 
     @Autowired
@@ -41,5 +41,12 @@ public class ForoController {
     public ResponseEntity<Void> eliminarForo(@PathVariable Long id) {
         foroService.eliminarForo(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/curso/{cursoId}")
+    public ResponseEntity<List<ForoResponse>> obtenerForosPorCurso(
+            @PathVariable Long cursoId) {
+        List<ForoResponse> foros = foroService.obtenerForosPorCurso(cursoId);
+        return ResponseEntity.ok(foros);
     }
 }

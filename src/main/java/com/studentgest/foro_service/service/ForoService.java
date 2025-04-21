@@ -11,4 +11,7 @@ public interface ForoService {
     ForoResponse obtenerForoPorId(Long id);
     ForoResponse actualizarForo(Long id, ForoRequest request);
     void eliminarForo(Long id);
+    // Nuevo método
+    List<ForoResponse> obtenerForosPorCurso(Long cursoId);
+    List<MensajeResponse> obtenerMensajesPorForo(Long foroId);
 }
